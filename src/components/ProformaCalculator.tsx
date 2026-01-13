@@ -80,10 +80,12 @@ const ProformaCalculator: React.FC = () => {
     useState<number>(0);
   const [endUserMonthlySalesOrders, setEndUserMonthlySalesOrders] =
     useState<number>(0);
-  const [commissionPerShipment, setCommissionPerShipment] = useState<number>(0);
-  const [commissionInput, setCommissionInput] = useState<string>("");
-  const [creditCardCommissions, setCreditCardCommissions] = useState<number>(0);
-  const [creditCardInput, setCreditCardInput] = useState<string>("");
+  const [commissionPerShipment, setCommissionPerShipment] =
+    useState<number>(0.5);
+  const [commissionInput, setCommissionInput] = useState<string>("0.5");
+  const [creditCardCommissions, setCreditCardCommissions] =
+    useState<number>(0.0071);
+  const [creditCardInput, setCreditCardInput] = useState<string>("0.0071");
   const [annualChurnRate, setAnnualChurnRate] = useState<number>(0);
 
   // Calculate financial data using Excel formulas from Proforma (12-Month) tab
@@ -363,34 +365,8 @@ const ProformaCalculator: React.FC = () => {
               type="text"
               inputMode="decimal"
               value={commissionInput}
-              onChange={(e) => {
-                const val = e.target.value;
-                // Allow empty, numbers, decimals, and partial decimals like "0." or ".5"
-                if (val === "" || /^[0-9]*\.?[0-9]*$/.test(val)) {
-                  setCommissionInput(val);
-                  const numVal =
-                    val === "" || val === "." ? 0 : parseFloat(val);
-                  setCommissionPerShipment(isNaN(numVal) ? 0 : numVal);
-                }
-              }}
-              onBlur={(e) => {
-                // On blur, clean up invalid values and update state
-                const val = e.target.value.trim();
-                if (val === "" || val === ".") {
-                  setCommissionInput("");
-                  setCommissionPerShipment(0);
-                } else {
-                  const numVal = parseFloat(val);
-                  if (isNaN(numVal)) {
-                    setCommissionInput("");
-                    setCommissionPerShipment(0);
-                  } else {
-                    setCommissionInput(numVal.toString());
-                    setCommissionPerShipment(numVal);
-                  }
-                }
-              }}
-              placeholder="Enter commission per shipment"
+              disabled={true}
+              style={{ opacity: 0.7, cursor: "not-allowed" }}
             />
           </div>
 
@@ -405,34 +381,8 @@ const ProformaCalculator: React.FC = () => {
               type="text"
               inputMode="decimal"
               value={creditCardInput}
-              onChange={(e) => {
-                const val = e.target.value;
-                // Allow empty, numbers, decimals, and partial decimals like "0." or ".5"
-                if (val === "" || /^[0-9]*\.?[0-9]*$/.test(val)) {
-                  setCreditCardInput(val);
-                  const numVal =
-                    val === "" || val === "." ? 0 : parseFloat(val);
-                  setCreditCardCommissions(isNaN(numVal) ? 0 : numVal);
-                }
-              }}
-              onBlur={(e) => {
-                // On blur, clean up invalid values and update state
-                const val = e.target.value.trim();
-                if (val === "" || val === ".") {
-                  setCreditCardInput("");
-                  setCreditCardCommissions(0);
-                } else {
-                  const numVal = parseFloat(val);
-                  if (isNaN(numVal)) {
-                    setCreditCardInput("");
-                    setCreditCardCommissions(0);
-                  } else {
-                    setCreditCardInput(numVal.toString());
-                    setCreditCardCommissions(numVal);
-                  }
-                }
-              }}
-              placeholder="Enter credit card commission rate"
+              disabled={true}
+              style={{ opacity: 0.7, cursor: "not-allowed" }}
             />
           </div>
 
@@ -505,16 +455,22 @@ const ProformaCalculator: React.FC = () => {
                       // Color mapping for each data key
                       const colorMap: { [key: string]: string } = {
                         totalRevenue: "#4CAF50",
+                        totalCOGS: "#9E9E9E",
                         grossProfit: "#2196F3",
+                        totalOperatingExpenses: "#E91E63",
                         netOperatingIncome: "#FF9800",
+                        netIncomePreDraw: "#9C27B0",
                         netIncome: "#F44336",
                       };
 
                       // Name mapping for display
                       const nameMap: { [key: string]: string } = {
                         totalRevenue: "Total Revenue",
+                        totalCOGS: "Total COGS",
                         grossProfit: "Gross Profit",
+                        totalOperatingExpenses: "Total Operating Expenses",
                         netOperatingIncome: "Net Operating Income",
+                        netIncomePreDraw: "Net Income (Pre-Draw)",
                         netIncome: "Net Income",
                       };
 
@@ -588,11 +544,27 @@ const ProformaCalculator: React.FC = () => {
                 />
                 <Line
                   type="monotone"
+                  dataKey="totalCOGS"
+                  stroke="#9E9E9E"
+                  strokeWidth={2}
+                  dot={{ fill: "#9E9E9E", r: 4 }}
+                  name="Total COGS"
+                />
+                <Line
+                  type="monotone"
                   dataKey="grossProfit"
                   stroke="#2196F3"
                   strokeWidth={2}
                   dot={{ fill: "#2196F3", r: 4 }}
                   name="Gross Profit"
+                />
+                <Line
+                  type="monotone"
+                  dataKey="totalOperatingExpenses"
+                  stroke="#E91E63"
+                  strokeWidth={2}
+                  dot={{ fill: "#E91E63", r: 4 }}
+                  name="Total Operating Expenses"
                 />
                 <Line
                   type="monotone"
@@ -602,6 +574,14 @@ const ProformaCalculator: React.FC = () => {
                   dot={{ fill: "#FF9800", r: 5 }}
                   name="Net Operating Income"
                   connectNulls={false}
+                />
+                <Line
+                  type="monotone"
+                  dataKey="netIncomePreDraw"
+                  stroke="#9C27B0"
+                  strokeWidth={2}
+                  dot={{ fill: "#9C27B0", r: 4 }}
+                  name="Net Income (Pre-Draw)"
                 />
                 <Line
                   type="monotone"
@@ -622,8 +602,11 @@ const ProformaCalculator: React.FC = () => {
               <div className="table-header">
                 <div>Month</div>
                 <div>Total Revenue</div>
+                <div>Total COGS</div>
                 <div>Gross Profit</div>
+                <div>Total Operating Expenses</div>
                 <div>Net Operating Income</div>
+                <div>Net Income (Pre-Draw)</div>
                 <div>Net Income</div>
               </div>
               {monthlyData.map((month, idx) => (
@@ -638,7 +621,21 @@ const ProformaCalculator: React.FC = () => {
                   </div>
                   <div>
                     $
+                    {month.totalCOGS.toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </div>
+                  <div>
+                    $
                     {month.grossProfit.toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </div>
+                  <div>
+                    $
+                    {month.totalOperatingExpenses.toLocaleString("en-US", {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     })}
@@ -654,6 +651,13 @@ const ProformaCalculator: React.FC = () => {
                   </div>
                   <div>
                     $
+                    {month.netIncomePreDraw.toLocaleString("en-US", {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </div>
+                  <div>
+                    $
                     {month.netIncome.toLocaleString("en-US", {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
@@ -661,6 +665,98 @@ const ProformaCalculator: React.FC = () => {
                   </div>
                 </div>
               ))}
+              {/* Total Row */}
+              <div
+                className="table-row"
+                style={{
+                  background: "rgba(168, 192, 177, 0.3)",
+                  borderTop: "2px solid #a8c0b1",
+                  fontWeight: 700,
+                  marginTop: "8px",
+                }}
+              >
+                <div>Total</div>
+                <div>
+                  <strong>
+                    $
+                    {monthlyData
+                      .reduce((sum, month) => sum + month.totalRevenue, 0)
+                      .toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                  </strong>
+                </div>
+                <div>
+                  <strong>
+                    $
+                    {monthlyData
+                      .reduce((sum, month) => sum + month.totalCOGS, 0)
+                      .toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                  </strong>
+                </div>
+                <div>
+                  <strong>
+                    $
+                    {monthlyData
+                      .reduce((sum, month) => sum + month.grossProfit, 0)
+                      .toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                  </strong>
+                </div>
+                <div>
+                  <strong>
+                    $
+                    {monthlyData
+                      .reduce(
+                        (sum, month) => sum + month.totalOperatingExpenses,
+                        0
+                      )
+                      .toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                  </strong>
+                </div>
+                <div>
+                  <strong>
+                    $
+                    {monthlyData
+                      .reduce((sum, month) => sum + month.netOperatingIncome, 0)
+                      .toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                  </strong>
+                </div>
+                <div>
+                  <strong>
+                    $
+                    {monthlyData
+                      .reduce((sum, month) => sum + month.netIncomePreDraw, 0)
+                      .toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                  </strong>
+                </div>
+                <div>
+                  <strong>
+                    $
+                    {monthlyData
+                      .reduce((sum, month) => sum + month.netIncome, 0)
+                      .toLocaleString("en-US", {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })}
+                  </strong>
+                </div>
+              </div>
             </div>
           </div>
         </div>
