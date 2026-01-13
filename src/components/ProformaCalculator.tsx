@@ -761,42 +761,39 @@ const ProformaCalculator: React.FC = () => {
           </div>
         </div>
 
-        {/* Tabs Navigation - HIDDEN FOR NOW */}
-        {false && (
-          <div
-            className="tabs-container"
-            style={{ marginTop: "32px", display: "none" }}
-          >
+        {/* Tabs Navigation */}
+        {true && (
+          <div className="tabs-container" style={{ marginTop: "32px" }}>
             <div className="tabs-header">
               <button
                 className={`tab-button ${activeTab === 0 ? "active" : ""}`}
                 onClick={() => setActiveTab(0)}
               >
-                Table 1: Revenue
+                Revenue
               </button>
               <button
                 className={`tab-button ${activeTab === 1 ? "active" : ""}`}
                 onClick={() => setActiveTab(1)}
               >
-                Table 2: COGS
+                COGS
               </button>
               <button
                 className={`tab-button ${activeTab === 2 ? "active" : ""}`}
                 onClick={() => setActiveTab(2)}
               >
-                Table 3: Operating Expenses
+                Operating Expenses
               </button>
               <button
                 className={`tab-button ${activeTab === 3 ? "active" : ""}`}
                 onClick={() => setActiveTab(3)}
               >
-                Table 4: Income Statement
+                Income Statement
               </button>
             </div>
 
             {/* Tab Content */}
             <div className="tab-content">
-              {/* Table 1: Revenue */}
+              {/* Revenue Table */}
               {activeTab === 0 && (
                 <div className="category-card">
                   <h3
@@ -806,7 +803,7 @@ const ProformaCalculator: React.FC = () => {
                       fontSize: "1.3rem",
                     }}
                   >
-                    Table 1: Revenue
+                    Revenue
                   </h3>
                   <div className="category-table">
                     <div>
@@ -871,7 +868,7 @@ const ProformaCalculator: React.FC = () => {
                 </div>
               )}
 
-              {/* Table 2: COGS */}
+              {/* COGS Table */}
               {activeTab === 1 && (
                 <div className="category-card">
                   <h3
@@ -881,7 +878,7 @@ const ProformaCalculator: React.FC = () => {
                       fontSize: "1.3rem",
                     }}
                   >
-                    Table 2: Cost of Goods Sold (COGS)
+                    Cost of Goods Sold (COGS)
                   </h3>
                   <div className="category-table">
                     <div>
@@ -948,7 +945,7 @@ const ProformaCalculator: React.FC = () => {
                 </div>
               )}
 
-              {/* Table 3: Operating Expenses */}
+              {/* Operating Expenses Table */}
               {activeTab === 2 && (
                 <div className="category-card">
                   <h3
@@ -958,7 +955,7 @@ const ProformaCalculator: React.FC = () => {
                       fontSize: "1.3rem",
                     }}
                   >
-                    Table 3: Operating Expenses
+                    Operating Expenses
                   </h3>
                   <div className="category-table">
                     <div>
@@ -1063,7 +1060,7 @@ const ProformaCalculator: React.FC = () => {
                 </div>
               )}
 
-              {/* Table 4: Summary / Income Statement */}
+              {/* Income Statement Table */}
               {activeTab === 3 && (
                 <div className="category-card">
                   <h3
@@ -1073,7 +1070,7 @@ const ProformaCalculator: React.FC = () => {
                       fontSize: "1.3rem",
                     }}
                   >
-                    Table 4: Income Statement Summary
+                    Income Statement Summary
                   </h3>
                   <div className="category-table">
                     <div>
