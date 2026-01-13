@@ -73,18 +73,18 @@ const ProformaCalculator: React.FC = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
 
   // Input fields from Assumptions tab - matching Excel Assumptions sheet
-  const [aov, setAov] = useState<number>(50);
+  const [aov, setAov] = useState<number>(0);
   const [monthlySubscriptionEcommerce, setMonthlySubscriptionEcommerce] =
-    useState<number>(35);
+    useState<number>(0);
   const [monthlySubscriptionWholesale, setMonthlySubscriptionWholesale] =
-    useState<number>(10);
+    useState<number>(0);
   const [endUserMonthlySalesOrders, setEndUserMonthlySalesOrders] =
-    useState<number>(120);
-  const [commissionPerShipment, setCommissionPerShipment] =
-    useState<number>(0.5);
-  const [creditCardCommissions, setCreditCardCommissions] =
-    useState<number>(0.0071);
-  const [annualChurnRate, setAnnualChurnRate] = useState<number>(5);
+    useState<number>(0);
+  const [commissionPerShipment, setCommissionPerShipment] = useState<number>(0);
+  const [commissionInput, setCommissionInput] = useState<string>("");
+  const [creditCardCommissions, setCreditCardCommissions] = useState<number>(0);
+  const [creditCardInput, setCreditCardInput] = useState<string>("");
+  const [annualChurnRate, setAnnualChurnRate] = useState<number>(0);
 
   // Calculate financial data using Excel formulas from Proforma (12-Month) tab
   const monthlyData = useMemo((): MonthlyFinancialData[] => {
@@ -360,13 +360,36 @@ const ProformaCalculator: React.FC = () => {
             </label>
             <input
               id="commission"
-              type="number"
-              min="0"
-              step="0.01"
-              value={commissionPerShipment || ""}
-              onChange={(e) =>
-                setCommissionPerShipment(parseFloat(e.target.value) || 0)
-              }
+              type="text"
+              inputMode="decimal"
+              value={commissionInput}
+              onChange={(e) => {
+                const val = e.target.value;
+                // Allow empty, numbers, decimals, and partial decimals like "0." or ".5"
+                if (val === "" || /^[0-9]*\.?[0-9]*$/.test(val)) {
+                  setCommissionInput(val);
+                  const numVal =
+                    val === "" || val === "." ? 0 : parseFloat(val);
+                  setCommissionPerShipment(isNaN(numVal) ? 0 : numVal);
+                }
+              }}
+              onBlur={(e) => {
+                // On blur, clean up invalid values and update state
+                const val = e.target.value.trim();
+                if (val === "" || val === ".") {
+                  setCommissionInput("");
+                  setCommissionPerShipment(0);
+                } else {
+                  const numVal = parseFloat(val);
+                  if (isNaN(numVal)) {
+                    setCommissionInput("");
+                    setCommissionPerShipment(0);
+                  } else {
+                    setCommissionInput(numVal.toString());
+                    setCommissionPerShipment(numVal);
+                  }
+                }
+              }}
               placeholder="Enter commission per shipment"
             />
           </div>
@@ -379,14 +402,37 @@ const ProformaCalculator: React.FC = () => {
             </label>
             <input
               id="credit-card"
-              type="number"
-              min="0"
-              step="0.0001"
-              value={creditCardCommissions || ""}
-              onChange={(e) =>
-                setCreditCardCommissions(parseFloat(e.target.value) || 0)
-              }
-              placeholder="Enter credit card commission rate (e.g., 0.0071)"
+              type="text"
+              inputMode="decimal"
+              value={creditCardInput}
+              onChange={(e) => {
+                const val = e.target.value;
+                // Allow empty, numbers, decimals, and partial decimals like "0." or ".5"
+                if (val === "" || /^[0-9]*\.?[0-9]*$/.test(val)) {
+                  setCreditCardInput(val);
+                  const numVal =
+                    val === "" || val === "." ? 0 : parseFloat(val);
+                  setCreditCardCommissions(isNaN(numVal) ? 0 : numVal);
+                }
+              }}
+              onBlur={(e) => {
+                // On blur, clean up invalid values and update state
+                const val = e.target.value.trim();
+                if (val === "" || val === ".") {
+                  setCreditCardInput("");
+                  setCreditCardCommissions(0);
+                } else {
+                  const numVal = parseFloat(val);
+                  if (isNaN(numVal)) {
+                    setCreditCardInput("");
+                    setCreditCardCommissions(0);
+                  } else {
+                    setCreditCardInput(numVal.toString());
+                    setCreditCardCommissions(numVal);
+                  }
+                }
+              }}
+              placeholder="Enter credit card commission rate"
             />
           </div>
 
