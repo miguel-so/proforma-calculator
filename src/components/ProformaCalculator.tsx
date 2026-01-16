@@ -271,6 +271,7 @@ const ProformaCalculator: React.FC = () => {
     <div className="calculator-container">
       <div className="calculator-header">
         <div className="header-top">
+          <img src="/logo.png" alt="Logo" className="logo" />
           <h1>12-Month Pro Forma Calculator</h1>
         </div>
         <p className="subtitle">
