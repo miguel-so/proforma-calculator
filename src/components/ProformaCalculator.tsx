@@ -80,12 +80,12 @@ const ProformaCalculator: React.FC = () => {
     useState<number>(0);
   const [endUserMonthlySalesOrders, setEndUserMonthlySalesOrders] =
     useState<number>(0);
-  const [commissionPerShipment, setCommissionPerShipment] =
+  const [commissionPerShipment, _setCommissionPerShipment] =
     useState<number>(0.5);
-  const [commissionInput, setCommissionInput] = useState<string>("0.5");
-  const [creditCardCommissions, setCreditCardCommissions] =
+  const [commissionInput, _setCommissionInput] = useState<string>("0.5");
+  const [creditCardCommissions, _setCreditCardCommissions] =
     useState<number>(0.0071);
-  const [creditCardInput, setCreditCardInput] = useState<string>("0.0071");
+  const [creditCardInput, _setCreditCardInput] = useState<string>("0.0071");
   const [annualChurnRate, setAnnualChurnRate] = useState<number>(0);
 
   // Calculate financial data using Excel formulas from Proforma (12-Month) tab
